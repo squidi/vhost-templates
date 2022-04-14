@@ -19,29 +19,29 @@ server {
   {{settings}}
 
   location = /.well-known/carddav {
-    return 301 $scheme://$host:$server_port/remote.php/dav;
+    return 301 $scheme://$host:$server_port/nextcloud/remote.php/dav;
   }
 
   location = /.well-known/caldav {
-    return 301 $scheme://$host:$server_port/remote.php/dav;
+    return 301 $scheme://$host:$server_port/nextcloud/remote.php/dav;
   }
 
-  location / {
-    rewrite ^ /index.php;
+  location /nextcloud {
+    rewrite ^ /nextcloud/index.php;
   }
 
-  location ~ ^\/(?:build|tests|config|lib|3rdparty|templates|data)\/ {
+  location ~ ^\/nextcloud\/(?:build|tests|config|lib|3rdparty|templates|data)\/ {
     deny all;
   }
 
-  location ~ ^\/(?:\.|autotest|occ|issue|indie|db_|console) {
+  location ~ ^\/nextcloud\/(?:\.|autotest|occ|issue|indie|db_|console) {
     deny all;
   }
 
   try_files $uri $uri/ /index.php?$args;
   index index.php index.html;
 
-  location ~ ^\/(?:index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+)\.php(?:$|\/) {
+  location ~ ^\/nextcloud\/(?:index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+)\.php(?:$|\/) {
     include fastcgi_params;
     fastcgi_split_path_info ^(.+?\.php)(\/.*|)$;
     set $path_info $fastcgi_path_info;
@@ -55,7 +55,7 @@ server {
     fastcgi_param PHP_VALUE "{{php_settings}}";
   }
 
-  location ~ ^\/(?:updater|oc[ms]-provider)(?:$|\/) {
+  location ~ ^\/nextcloud\/(?:updater|oc[ms]-provider)(?:$|\/) {
     try_files $uri/ =404;
     index index.php;
   }
