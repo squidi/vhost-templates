@@ -6,7 +6,7 @@ server {
   listen [::]:443 ssl http2;
   {{ssl_certificate_key}}
   {{ssl_certificate}}
-  {{server_name}}
+  server_name cp-contao.squidi.de;
   {{root}}
 
   {{nginx_access_log}}
@@ -18,15 +18,22 @@ server {
 
   {{settings}}
 
-  try_files $uri $uri/ /index.php?$args;
-  index index.php index.html;
+  rewrite ^/app\.php/?(.*)$ /$1 permanent;
 
-  location ~ \.php$ {
+  location / {
+    index app.php;
+    try_files $uri @rewriteapp;
+  }
+
+  location @rewriteapp {
+    rewrite ^(.*)$ /app.php/$1 last;
+  }
+
+  location ~ ^/(app|app_dev|preview|config|install|contao-manager\.phar)\.php(/|$) {
     include fastcgi_params;
     fastcgi_intercept_errors on;
-    fastcgi_index index.php;
+    fastcgi_split_path_info ^(.+\.php)(/.*)$;
     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    try_files $uri =404;
     fastcgi_read_timeout 3600;
     fastcgi_send_timeout 3600;
     fastcgi_param HTTPS $fastcgi_https;
