@@ -16,15 +16,18 @@ server {
     rewrite ^ https://$host$uri permanent;
   }
 
-  {{settings}}
-
-  location = /.well-known/carddav {
-    return 301 $scheme://$host:$server_port/remote.php/dav;
+  location ^~ /.well-known {
+  
+    location = /.well-known/carddav     { return 301 /remote.php/dav/; }
+    location = /.well-known/caldav      { return 301 /remote.php/dav/; }
+    location ^~ /.well-known            { return 301 /index.php$uri; }
+    
+    try_files $uri $uri/ =404;
+    auth_basic off;
+    allow all;
   }
-
-  location = /.well-known/caldav {
-    return 301 $scheme://$host:$server_port/remote.php/dav;
-  }
+  
+  {{basic_auth}}
 
   location / {
     rewrite ^ /index.php;
