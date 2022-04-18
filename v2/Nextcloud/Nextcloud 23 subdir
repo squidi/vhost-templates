@@ -30,14 +30,6 @@ server {
         allow all;
     }
 
-  location = /.well-known/carddav {
-    return 301 $scheme://$host:$server_port/nextcloud/remote.php/dav;
-  }
-
-  location = /.well-known/caldav {
-    return 301 $scheme://$host:$server_port/nextcloud/remote.php/dav;
-  }
-
   location /nextcloud {
     rewrite ^ /nextcloud/index.php;
   }
