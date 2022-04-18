@@ -26,8 +26,6 @@ server {
     auth_basic off;
     allow all;
   }
-  
-  {{basic_auth}}
 
   location / {
     rewrite ^ /index.php;
